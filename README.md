@@ -122,6 +122,12 @@ composer run dev
 
 This concurrently starts the Laravel server, queue worker, log watcher (Pail), and Vite dev server.
 
+
+
+
+Admin Login Credinteials 
+email - admin@example.com
+pass - password
 ---
 
 ## License
