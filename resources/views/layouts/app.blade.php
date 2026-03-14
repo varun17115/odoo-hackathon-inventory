@@ -180,6 +180,7 @@
         .badge-gray { background: #f1f5f9; color: #475569; }
         .badge-orange { background: #ffedd5; color: #c2410c; }
         .badge-indigo { background: #e0e7ff; color: #3730a3; }
+        .badge-dark { background: #1e293b; color: #f1f5f9; }
 
         .form-group { margin-bottom: 14px; }
         .form-label { display: block; font-size: 0.78rem; font-weight: 600; color: #374151; margin-bottom: 5px; }
