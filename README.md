@@ -1,135 +1,291 @@
-# Invento Market
+# CoreInventory – Inventory Management System
 
-A Laravel 12 inventory management system built for the Odoo Hackathon. Covers the full warehouse lifecycle — receipts, transfers, deliveries, stock adjustments, reorder rules, and a real-time dashboard.
+## Overview
+
+CoreInventory is a modular **Inventory Management System (IMS)** designed to digitize and streamline stock operations within a business.
+It replaces manual registers and Excel-based tracking with a **centralized, real-time inventory platform**.
+
+The system enables organizations to efficiently manage:
+
+* Product catalogs
+* Warehouse locations
+* Incoming stock
+* Outgoing deliveries
+* Internal stock transfers
+* Inventory adjustments
+* Stock movement tracking
+
+All inventory changes are recorded through a **stock movement ledger**, ensuring transparency and traceability of every operation.
 
 ---
 
-## Requirements
+# Problem Statement
 
-- PHP 8.2+
-- Composer
-- Node.js 18+ & npm
-- SQLite (default) or MySQL/PostgreSQL
+Many businesses still rely on spreadsheets or manual logs to manage inventory, which often leads to:
+
+* Data inconsistencies
+* Stock mismatches
+* Lack of real-time visibility
+* Operational inefficiencies
+
+CoreInventory solves this by providing a **structured inventory workflow** that tracks all stock operations through a centralized application.
 
 ---
 
-## Setup
+# Key Features
 
-**1. Clone and install dependencies**
+### Product Management
 
-```bash
-git clone <repo-url>
-cd invento-market-main
-composer install
-npm install
+* Create and manage products
+* SKU-based identification
+* Product categorization
+* Unit of measure support
+* Reorder level tracking
+
+### Multi-Warehouse Support
+
+* Create multiple warehouses
+* Define storage locations
+* Track inventory per location
+
+### Receipts (Incoming Stock)
+
+* Register stock received from vendors
+* Update inventory automatically
+* Record receipt history
+
+### Delivery Orders
+
+* Manage outgoing shipments
+* Pick and pack workflow
+* Reduce stock automatically upon validation
+
+### Internal Transfers
+
+* Move stock between warehouses or locations
+* Maintain accurate location-based inventory
+
+### Inventory Adjustments
+
+* Correct stock discrepancies
+* Record adjustments for damaged or missing items
+
+### Stock Ledger
+
+Every stock change is logged in a **stock movement ledger**, providing a complete audit trail of inventory operations.
+
+### Dashboard Analytics
+
+The dashboard provides real-time insights including:
+
+* Total products in stock
+* Low stock alerts
+* Pending receipts
+* Pending deliveries
+* Scheduled transfers
+
+---
+
+# Technology Stack
+
+Backend
+Laravel
+
+Frontend
+Blade + TailwindCSS
+
+Database
+MySQL
+
+Authentication
+Laravel Breeze
+
+Version Control
+Git & GitHub
+
+---
+
+# System Architecture
+
+The system follows a **stock movement-based inventory model**.
+
+Inventory changes never occur directly.
+Every operation generates a stock movement entry.
+
+```
+Operation → Stock Movement → Stock Update → Ledger Record
 ```
 
-**2. Configure environment**
+Supported operations:
 
-```bash
+* Receipts
+* Deliveries
+* Transfers
+* Adjustments
+
+---
+
+# Database Schema
+
+Core tables used in the system:
+
+```
+users
+categories
+products
+warehouses
+locations
+stocks
+
+receipts
+receipt_items
+
+deliveries
+delivery_items
+
+transfers
+transfer_items
+
+adjustments
+adjustment_items
+
+stock_movements
+stock_movement_items
+```
+
+These tables ensure accurate tracking of stock levels and movement history.
+
+---
+
+# Installation Guide
+
+### Clone Repository
+
+```
+git clone https://github.com/varun17115/odoo-hackathon-inventory.git
+cd odoo-hackathon-inventory
+```
+
+### Install Dependencies
+
+```
+composer install
+npm install
+npm run dev
+```
+
+### Environment Setup
+
+```
 cp .env.example .env
 php artisan key:generate
 ```
 
-The default config uses SQLite — no database server needed. If you want MySQL/PostgreSQL, update these values in `.env`:
+Update database credentials in `.env`.
 
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=invento_market
-DB_USERNAME=root
-DB_PASSWORD=
+### Database Setup
+
+Import the provided database file:
+
+```
+database.sql
 ```
 
-**3. Run migrations and seed**
+Or run migrations if provided:
 
-```bash
-php artisan migrate --seed
+```
+php artisan migrate
 ```
 
-**4. Build frontend assets**
+### Run the Application
 
-```bash
-npm run build
 ```
-
-**5. Start the dev server**
-
-```bash
 php artisan serve
 ```
 
-Visit [http://localhost:8000](http://localhost:8000)
+Open:
 
----
-
-## Default Credentials
-
-After seeding, a default user is created:
-
-| Field    | Value              |
-|----------|--------------------|
-| Email    | test@example.com   |
-| Password | password           |
-
-To create an admin user, register via `/register` or update the user's `role` column to `admin` directly in the database.
-
----
-
-## User Roles
-
-| Role    | Access                                                                 |
-|---------|------------------------------------------------------------------------|
-| `admin` | Full access — CRUD on all resources, user management, stock adjustments, reorder rules |
-| `staff` | Read access + create receipts, deliveries, and transfers               |
-
----
-
-## Features
-
-- Dashboard with KPIs, low-stock alerts, and activity feed
-- Product & category management
-- Multi-warehouse support with rack/location tracking
-- Supplier management
-- Receipts (goods-in) with verification workflow
-- Deliveries with pick → pack → ship workflow
-- Inter-warehouse transfers
-- Stock adjustments (admin only)
-- Reorder rules with triggered alerts
-- Stock movement ledger
-- Inventory summary by warehouse and category
-- User management with role-based access control
-- Password reset via OTP
-
----
-
-## One-Command Setup (via Composer script)
-
-```bash
-composer run setup
+```
+http://localhost:8000
 ```
 
-This runs `composer install`, copies `.env`, generates the app key, runs migrations, installs npm packages, and builds assets.
-
 ---
 
-## Running in Dev Mode (with Vite HMR)
+# Admin Login Credentials
 
-```bash
-composer run dev
+```
+Email: admin@example.com
+Password: password
 ```
 
-This concurrently starts the Laravel server, queue worker, log watcher (Pail), and Vite dev server.
-
-
-
-
-Admin Login Credinteials 
-email - admin@example.com
-pass - password
 ---
 
-## License
+# Project Structure
 
-MIT
+```
+app
+ ├ Models
+ ├ Http/Controllers
+ ├ Services
+
+database
+ ├ migrations
+ ├ seeders
+
+resources
+ ├ views
+ ├ css
+ ├ js
+
+routes
+ ├ web.php
+```
+
+---
+
+# Screenshots
+
+Screenshots of the system interface are available in the `/screenshots` folder.
+
+Examples include:
+
+* Dashboard
+* Product Management
+* Receipts
+* Transfers
+* Stock Ledger
+
+---
+
+# Demo Video
+
+A complete walkthrough of the system is available here:
+
+Demo Video Link
+
+*(Replace with your uploaded video link)*
+
+---
+
+# Future Improvements
+
+Potential enhancements include:
+
+* Barcode / QR code scanning for products
+* Mobile inventory management application
+* AI-based demand forecasting
+* Automated purchase order generation
+* Advanced inventory analytics
+
+---
+
+# Contributors
+
+Varun Bardia
+Hackathon Participant
+
+---
+
+# License
+
+This project is licensed under the MIT License.
