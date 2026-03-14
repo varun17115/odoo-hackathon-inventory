@@ -10,14 +10,27 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with('category', 'inventory')->paginate(15);
-        return view('products.index', compact('products'));
-    }
+        $query = Product::with(['category', 'stocks', 'reorderRules']);
 
-    public function create()
-    {
+        if (request('category_id')) {
+            $query->where('category_id', request('category_id'));
+        }
+
+        if (request('is_active') !== null && request('is_active') !== '') {
+            $query->where('is_active', request('is_active'));
+        }
+
+        if (request('search')) {
+            $query->where(function($q) {
+                $q->where('name', 'like', '%' . request('search') . '%')
+                  ->orWhere('sku', 'like', '%' . request('search') . '%');
+            });
+        }
+
+        $products   = $query->paginate(15);
         $categories = Category::all();
-        return view('products.create', compact('categories'));
+
+        return view('products.index', compact('products', 'categories'));
     }
 
     public function store(Request $request)
@@ -38,14 +51,29 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        $product->load('category', 'inventory', 'logs');
-        return view('products.show', compact('product'));
-    }
-
-    public function edit(Product $product)
-    {
-        $categories = Category::all();
-        return view('products.edit', compact('product', 'categories'));
+        $product->load([
+            'category',
+            'stocks.warehouse',
+            'stocks.location',
+            'reorderRules.warehouse',
+            'reorderRules.preferredSupplier',
+        ]);
+        
+        // Get total stock across all locations
+        $totalStock = $product->stocks->sum('quantity');
+        
+        // Get recent stock movements for this product
+        $recentMovements = \App\Models\StockMovement::whereHas('items', function ($query) use ($product) {
+            $query->where('product_id', $product->id);
+        })
+        ->with(['user', 'items' => function ($query) use ($product) {
+            $query->where('product_id', $product->id);
+        }])
+        ->latest()
+        ->take(10)
+        ->get();
+        
+        return view('products.show', compact('product', 'totalStock', 'recentMovements'));
     }
 
     public function update(Request $request, Product $product)
@@ -61,7 +89,7 @@ class ProductController extends Controller
         ]);
 
         $product->update($validated);
-        return redirect()->route('products.show', $product)->with('success', 'Product updated successfully');
+        return redirect()->route('products.index')->with('success', 'Product updated successfully');
     }
 
     public function destroy(Product $product)

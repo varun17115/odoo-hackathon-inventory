@@ -31,4 +31,19 @@ class Product extends Model
     {
         return $this->hasMany(InventoryLog::class);
     }
+
+    public function stocks(): HasMany
+    {
+        return $this->hasMany(Stock::class);
+    }
+
+    public function reorderRules(): HasMany
+    {
+        return $this->hasMany(ReorderRule::class);
+    }
+
+    public function getTotalStockAttribute(): int
+    {
+        return $this->stocks->sum('quantity');
+    }
 }
